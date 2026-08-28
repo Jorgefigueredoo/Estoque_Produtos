@@ -1,0 +1,35 @@
+package com.estoque.model;
+
+import com.estoque.constants.CategoriaEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity(name = "produtos")
+public class Produto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_produto")
+    private Long id;
+
+    @Column(name = "nome_produto", nullable = false)
+    private String nome;
+
+    @Column(name = "descricao", nullable = true)
+    private String descricao;
+
+    @Column(name = "categoria", nullable = false)
+    private CategoriaEnum categoria;
+
+    @Column(name = "preço", nullable = false)
+    private Double preco;
+    
+}
