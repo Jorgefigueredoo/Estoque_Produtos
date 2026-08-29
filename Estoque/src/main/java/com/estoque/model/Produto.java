@@ -29,7 +29,10 @@ public class Produto {
     @Column(name = "categoria", nullable = false)
     private CategoriaEnum categoria;
 
-    @Column(name = "preço", nullable = false)
+    @Column(name = "preco", nullable = false)
     private Double preco;
+
+    @Column(name = "quantidade", nullable = false)
+    private Integer quantidade;
     
 }
