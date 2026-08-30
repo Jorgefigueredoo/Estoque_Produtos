@@ -1,8 +1,17 @@
-HELP.md
+### Java / Maven (Estoque) ###
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Node / Vite (front) ###
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
 
 ### STS ###
 .apt_generated
@@ -20,17 +29,14 @@ target/
 *.ipr
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
 
 ### VS Code ###
 .vscode/
 
 ### Configuração local ###
-src/main/resources/application.properties
+Estoque/HELP.md
+Estoque/src/main/resources/application.properties
