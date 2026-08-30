@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Tokens
+   ========================================================================== */
+:root {
+  --papel: #efece3;
+  --papel-alt: #e6e1d3;
+  --tinta: #21261f;
+  --tinta-suave: #565f4f;
+  --linha: #c6c0ac;
+  --ambar: #b8901f;
+  --ambar-escuro: #8f6e15;
+  --entrada: #3f6b4a;
+  --saida: #8b3a3a;
+  --branco: #fbfaf6;
+
+  --fonte-display: "IBM Plex Serif", Georgia, serif;
+  --fonte-corpo: "IBM Plex Sans", system-ui, sans-serif;
+  --fonte-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  --raio: 3px;
+  --sombra: 0 1px 0 rgba(33, 38, 31, 0.06), 0 8px 20px -12px rgba(33, 38, 31, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+/* Garante que o atributo [hidden] vença regras de display (ex.: .modal usa flex) */
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fonte-corpo);
+  line-height: 1.5;
+  background-image:
+    linear-gradient(var(--papel-alt) 1px, transparent 1px);
+  background-size: 100% 32px;
+}
+
+/* ==========================================================================
+   Topo
+   ========================================================================== */
+.topo {
+  background: var(--tinta);
+  color: var(--papel);
+  border-bottom: 4px solid var(--ambar);
+}
+
+.topo__conteudo {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.topo__eyebrow {
+  display: block;
+  font-family: var(--fonte-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ambar);
+  margin-bottom: 4px;
+}
+
+.topo h1 {
+  font-family: var(--fonte-display);
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.carimbo {
+  border: 2px dashed rgba(251, 250, 246, 0.4);
+  border-radius: 50%;
+  width: 92px;
+  height: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-6deg);
+  flex-shrink: 0;
+  font-family: var(--fonte-mono);
+}
+
+.carimbo span {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(251, 250, 246, 0.7);
+  line-height: 1.2;
+}
+
+.carimbo strong {
+  font-size: 22px;
+  color: var(--branco);
+}
+
+/* ==========================================================================
+   Mensagem de feedback
+   ========================================================================== */
+.mensagem {
+  max-width: 1080px;
+  margin: 20px auto 0;
+  padding: 12px 24px;
+  border-radius: var(--raio);
+  font-family: var(--fonte-mono);
+  font-size: 14px;
+}
+
+.mensagem--sucesso {
+  background: #e4ede4;
+  border: 1px solid var(--entrada);
+  color: var(--entrada);
+}
+
+.mensagem--erro {
+  background: #f2e4e2;
+  border: 1px solid var(--saida);
+  color: var(--saida);
+}
+
+/* ==========================================================================
+   Layout principal
+   ========================================================================== */
+.conteudo {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .conteudo { grid-template-columns: 1fr; }
+}
+
+.cartao {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 24px;
+  position: relative;
+}
+
+.cartao h2 {
+  font-family: var(--fonte-display);
+  font-size: 20px;
+  margin: 0 0 2px;
+}
+
+.cartao__legenda {
+  font-family: var(--fonte-mono);
+  font-size: 12px;
+  color: var(--tinta-suave);
+  margin: 0 0 20px;
+}
+
+.cartao__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* Ficha de cadastro: efeito de etiqueta com furo */
+.cartao--ficha {
+  border-style: dashed;
+  border-color: var(--linha);
+}
+
+.furo {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  box-shadow: inset 0 1px 2px rgba(33, 38, 31, 0.15);
+}
+
+.cartao--ficha h2,
+.cartao--ficha .cartao__legenda {
+  padding-left: 26px;
+}
+
+/* ==========================================================================
+   Formulário
+   ========================================================================== */
+.campo {
+  margin-bottom: 16px;
+}
+
+.campo-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tinta-suave);
+  margin-bottom: 6px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fonte-corpo);
+  font-size: 14px;
+}
+
+input[type="number"] {
+  font-family: var(--fonte-mono);
+}
+
+textarea { resize: vertical; }
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--ambar-escuro);
+  outline-offset: 1px;
+}
+
+.campo__ajuda {
+  display: block;
+  font-size: 11px;
+  color: var(--tinta-suave);
+  margin-top: 4px;
+}
+
+/* Estado: campo desabilitado (nome em modo edição) */
+input:disabled {
+  background: var(--papel-alt);
+  color: var(--tinta-suave);
+  cursor: not-allowed;
+}
+
+/* Estado: campo de quantidade some em modo edição (via JS: .oculto-em-edicao) */
+.oculto-em-edicao { display: none; }
+
+.cartao__acoes {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Botões
+   ========================================================================== */
+.btn {
+  font-family: var(--fonte-corpo);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--raio);
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn--primario {
+  background: var(--ambar);
+  color: var(--branco);
+}
+.btn--primario:hover { background: var(--ambar-escuro); }
+
+.btn--texto {
+  background: transparent;
+  color: var(--tinta-suave);
+  border-color: var(--linha);
+}
+.btn--texto:hover { background: var(--papel-alt); }
+
+.btn--icone {
+  background: transparent;
+  border: 1px solid var(--linha);
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--tinta-suave);
+}
+.btn--icone:hover { color: var(--tinta); background: var(--papel-alt); }
+
+.btn--linha {
+  background: transparent;
+  border-color: var(--linha);
+  color: var(--tinta);
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.btn--linha:hover { background: var(--papel-alt); }
+
+.btn--entrada { color: var(--entrada); border-color: var(--entrada); }
+.btn--entrada:hover { background: #e4ede4; }
+
+.btn--saida { color: var(--saida); border-color: var(--saida); }
+.btn--saida:hover { background: #f2e4e2; }
+
+.btn--excluir { color: var(--saida); }
+.btn--excluir:hover { background: #f2e4e2; }
+
+/* ==========================================================================
+   Tabela / Ledger
+   ========================================================================== */
+.tabela-wrap { overflow-x: auto; }
+
+.tabela-ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela-ledger th {
+  text-align: left;
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+  border-bottom: 2px solid var(--tinta);
+  padding: 0 10px 10px;
+}
+
+.tabela-ledger td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--linha);
+  vertical-align: middle;
+}
+
+.tabela-ledger tbody tr {
+  animation: entrar 0.25s ease both;
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tabela-ledger tbody tr:hover { background: var(--papel-alt); }
+
+.col-numero { text-align: right; }
+td.col-numero { font-family: var(--fonte-mono); text-align: right; }
+
+.col-acoes {
+  text-align: right;
+}
+
+.linha-acoes {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.produto-nome {
+  font-weight: 600;
+}
+
+.produto-descricao {
+  display: block;
+  font-size: 12px;
+  color: var(--tinta-suave);
+  font-weight: 400;
+}
+
+.badge {
+  display: inline-block;
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--linha);
+  color: var(--tinta-suave);
+}
+
+.badge--baixo {
+  color: var(--saida);
+  border-color: var(--saida);
+  background: #f2e4e2;
+}
+
+.vazio {
+  text-align: center;
+  color: var(--tinta-suave);
+  padding: 32px 10px;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Modal de movimentação
+   ========================================================================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(33, 38, 31, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.modal__caixa {
+  background: var(--branco);
+  border-radius: var(--raio);
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: var(--sombra);
+}
+
+.modal__caixa h3 {
+  font-family: var(--fonte-display);
+  margin: 0 0 16px;
+  font-size: 18px;
+}

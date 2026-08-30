@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estoque — Controle de Produtos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo__conteudo">
+      <div class="topo__titulo">
+        <span class="topo__eyebrow">controle de estoque</span>
+        <h1>Estoque</h1>
+      </div>
+      <div class="carimbo" aria-hidden="true">
+        <span>ITENS EM<br>ESTOQUE</span>
+        <strong id="contador-total">0</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- Área de mensagens (sucesso/erro). O JS controla a classe (.mensagem--sucesso / .mensagem--erro) e o atributo hidden -->
+  <div id="mensagem" class="mensagem" role="status" hidden></div>
+
+  <main class="conteudo">
+
+    <!-- FICHA DE CADASTRO / EDIÇÃO -->
+    <section class="cartao cartao--ficha" aria-labelledby="ficha-titulo">
+      <div class="furo" aria-hidden="true"></div>
+      <h2 id="ficha-titulo">Ficha do produto</h2>
+      <p class="cartao__legenda" id="ficha-modo">Novo cadastro</p>
+
+      <!--
+        O id do produto em edição fica guardado nesse input hidden.
+        Quando estiver vazio -> modo cadastro (POST).
+        Quando tiver um valor -> modo edição (PUT), preenchido pelo JS ao clicar em "Editar".
+      -->
+      <form id="produto-form" novalidate>
+        <input type="hidden" id="produto-id" value="">
+
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" required maxlength="120" placeholder="Ex: Cadeira de escritório">
+          <span class="campo__ajuda" id="nome-ajuda">O nome não pode ser alterado após o cadastro.</span>
+        </div>
+
+        <div class="campo">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="descricao" rows="2" placeholder="Detalhes do produto (opcional)"></textarea>
+        </div>
+
+        <div class="campo-linha">
+          <div class="campo">
+            <label for="categoria">Categoria</label>
+            <!-- Ajuste os values abaixo para baterem EXATAMENTE com as constantes do seu CategoriaEnum -->
+            <select id="categoria" name="categoria" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="MOVEIS">Móveis</option>
+              <option value="ELETRONICOS">Eletrônicos</option>
+              <option value="ALIMENTOS">Alimentos</option>
+              <option value="ROUPAS">Roupas</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="preco">Preço (R$)</label>
+            <input type="number" id="preco" name="preco" required min="0" step="0.01" placeholder="0,00">
+          </div>
+        </div>
+
+        <div class="campo" id="campo-quantidade">
+          <label for="quantidade">Quantidade inicial</label>
+          <input type="number" id="quantidade" name="quantidade" required min="0" step="1" placeholder="0">
+          <span class="campo__ajuda">Depois do cadastro, o estoque só muda por entrada/saída.</span>
+        </div>
+
+        <div class="cartao__acoes">
+          <button type="submit" id="btn-salvar" class="btn btn--primario">Cadastrar produto</button>
+          <button type="button" id="btn-cancelar-edicao" class="btn btn--texto" hidden>Cancelar edição</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- LISTAGEM -->
+    <section class="cartao cartao--lista" aria-labelledby="lista-titulo">
+      <div class="cartao__cabecalho">
+        <h2 id="lista-titulo">Produtos cadastrados</h2>
+        <button type="button" id="btn-recarregar" class="btn btn--icone" title="Recarregar lista">↻</button>
+      </div>
+
+      <div class="tabela-wrap">
+        <table class="tabela-ledger">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th class="col-numero">Preço</th>
+              <th class="col-numero">Qtd.</th>
+              <th class="col-acoes">Ações</th>
+            </tr>
+          </thead>
+          <!-- O JS preenche este tbody dinamicamente, uma <tr> por produto -->
+          <tbody id="produtos-tbody">
+            <tr id="linha-vazia">
+              <td colspan="5" class="vazio">Nenhum produto cadastrado ainda.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!--
+    Modal simples para dar entrada/saída de estoque.
+    O JS abre isso (remove o [hidden]) e define:
+      - #movimento-titulo (texto "Entrada" ou "Saída")
+      - #movimento-produto-id (hidden, id do produto)
+      - #movimento-tipo (hidden, "entrada" ou "saida")
+  -->
+  <div id="movimento-modal" class="modal" hidden>
+    <div class="modal__caixa">
+      <h3 id="movimento-titulo">Movimentar estoque</h3>
+      <form id="movimento-form">
+        <input type="hidden" id="movimento-produto-id" value="">
+        <input type="hidden" id="movimento-tipo" value="">
+        <div class="campo">
+          <label for="movimento-quantidade">Quantidade</label>
+          <input type="number" id="movimento-quantidade" min="1" step="1" required autofocus>
+        </div>
+        <div class="cartao__acoes">
+          <button type="submit" class="btn btn--primario">Confirmar</button>
+          <button type="button" id="btn-fechar-modal" class="btn btn--texto">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
