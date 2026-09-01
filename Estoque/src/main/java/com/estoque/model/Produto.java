@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +21,10 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_produto")
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_id", nullable = false)
+    private Fornecedor fornecedor;
 
     @Column(name = "nome_produto", nullable = false)
     private String nome;
