@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
+import com.estoque.dto.ProdutoRequest;
 import com.estoque.dto.QuantidadeRequest;
 import com.estoque.model.Produto;
 import com.estoque.service.ProdutoService;
@@ -18,7 +20,7 @@ import com.estoque.service.ProdutoService;
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
-    
+
     private final ProdutoService produtoService;
 
     public ProdutoController(ProdutoService produtoService) {
@@ -31,8 +33,15 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    public Produto editarProduto(@RequestBody Produto produto,@PathVariable Long id) {
-        return produtoService.editarProduto(produto, id);
+    public Produto editarProduto(@RequestBody ProdutoRequest produtoRequest, @PathVariable Long id) {
+        Produto produto = new Produto();
+        produto.setNome(produtoRequest.getNome());
+        produto.setDescricao(produtoRequest.getDescricao());
+        produto.setPreco(produtoRequest.getPreco());
+        produto.setQuantidade(produtoRequest.getQuantidade());
+        produto.setCategoria(produtoRequest.getCategoria());
+
+        return produtoService.editarProduto(produto, id, produtoRequest.getFornecedorId());
     }
 
     @PostMapping("/{id}/entrada")
@@ -46,8 +55,16 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public Produto salvarProduto(@RequestBody Produto produto) {
-        return produtoService.salvarProduto(produto);
+    public Produto salvarProduto(@RequestBody ProdutoRequest produtoRequest) {
+        Produto produto = new Produto();
+        produto.setNome(produtoRequest.getNome());
+        produto.setDescricao(produtoRequest.getDescricao());
+        produto.setPreco(produtoRequest.getPreco());
+        produto.setQuantidade(produtoRequest.getQuantidade());
+        produto.setCategoria(produtoRequest.getCategoria());
+
+        return produtoService.salvarProduto(produto, produtoRequest.getFornecedorId());
+
     }
 
     @DeleteMapping("/{id}")
