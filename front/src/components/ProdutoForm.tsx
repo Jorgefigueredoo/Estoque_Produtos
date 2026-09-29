@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { Fornecedor } from "../types/fornecedor";
 import {
   CATEGORIAS,
   ROTULO_CATEGORIA,
@@ -12,6 +13,7 @@ interface FormState {
   nome: string;
   descricao: string;
   categoria: string;
+  fornecedorId: string;
   preco: string;
   quantidade: string;
 }
@@ -20,6 +22,7 @@ const FORM_VAZIO: FormState = {
   nome: "",
   descricao: "",
   categoria: "",
+  fornecedorId: "",
   preco: "",
   quantidade: "",
 };
@@ -27,6 +30,7 @@ const FORM_VAZIO: FormState = {
 interface Props {
   /** null = modo cadastro (POST); preenchido = modo edição (PUT). */
   produtoEmEdicao: Produto | null;
+  fornecedores: Fornecedor[];
   onCadastrar: (produto: NovoProduto) => Promise<boolean>;
   onSalvarEdicao: (id: number, produto: EdicaoProduto) => Promise<boolean>;
   onCancelarEdicao: () => void;
@@ -35,6 +39,7 @@ interface Props {
 
 export function ProdutoForm({
   produtoEmEdicao,
+  fornecedores,
   onCadastrar,
   onSalvarEdicao,
   onCancelarEdicao,
@@ -57,6 +62,7 @@ export function ProdutoForm({
       nome: produtoEmEdicao.nome,
       descricao: produtoEmEdicao.descricao ?? "",
       categoria: produtoEmEdicao.categoria,
+      fornecedorId: String(produtoEmEdicao.fornecedorId),
       preco: String(produtoEmEdicao.preco),
       quantidade: "",
     });
@@ -76,6 +82,7 @@ export function ProdutoForm({
     const nome = form.nome.trim();
     const descricao = form.descricao.trim();
     const categoria = form.categoria as Categoria;
+    const fornecedorId = parseInt(form.fornecedorId, 10);
     const preco = parseFloat(form.preco);
     const quantidade = parseInt(form.quantidade, 10);
 
@@ -86,6 +93,10 @@ export function ProdutoForm({
     }
     if (!form.categoria) {
       onErroValidacao("Escolha uma categoria.");
+      return;
+    }
+    if (Number.isNaN(fornecedorId)) {
+      onErroValidacao("Escolha um fornecedor.");
       return;
     }
     if (Number.isNaN(preco)) {
@@ -105,8 +116,16 @@ export function ProdutoForm({
             descricao,
             categoria,
             preco,
+            fornecedorId,
           })
-        : await onCadastrar({ nome, descricao, categoria, preco, quantidade });
+        : await onCadastrar({
+            nome,
+            descricao,
+            categoria,
+            preco,
+            quantidade,
+            fornecedorId,
+          });
 
       if (deuCerto && !editando) setForm(FORM_VAZIO);
     } finally {
@@ -153,6 +172,28 @@ export function ProdutoForm({
             value={form.descricao}
             onChange={(e) => alterar("descricao", e.target.value)}
           />
+        </div>
+
+        <div className="campo">
+          <label htmlFor="fornecedor">Fornecedor</label>
+          <select
+            id="fornecedor"
+            name="fornecedor"
+            required
+            value={form.fornecedorId}
+            onChange={(e) => alterar("fornecedorId", e.target.value)}
+          >
+            <option value="" disabled>
+              {fornecedores.length === 0
+                ? "Cadastre um fornecedor antes"
+                : "Selecione"}
+            </option>
+            {fornecedores.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.nome}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="campo-linha">

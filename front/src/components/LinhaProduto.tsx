@@ -22,6 +22,7 @@ export function LinhaProduto({
       <td>
         <span className="badge">{produto.categoria}</span>
       </td>
+      <td>{produto.fornecedorNome}</td>
       <td className="col-numero">R$ {produto.preco.toFixed(2)}</td>
       <td className="col-numero">{produto.quantidade}</td>
       <td className="col-acoes">

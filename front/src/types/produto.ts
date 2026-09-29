@@ -23,6 +23,8 @@ export interface Produto {
   categoria: Categoria;
   preco: number;
   quantidade: number;
+  fornecedorId: number;
+  fornecedorNome: string;
 }
 
 // Corpo do POST /api/produtos
@@ -32,6 +34,7 @@ export interface NovoProduto {
   categoria: Categoria;
   preco: number;
   quantidade: number;
+  fornecedorId: number;
 }
 
 // Corpo do PUT /api/produtos/{id}.

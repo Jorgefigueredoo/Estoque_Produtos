@@ -36,6 +36,7 @@ export function ListaProdutos({
             <tr>
               <th>Produto</th>
               <th>Categoria</th>
+              <th>Fornecedor</th>
               <th className="col-numero">Preço</th>
               <th className="col-numero">Qtd.</th>
               <th className="col-acoes">Ações</th>
@@ -44,7 +45,7 @@ export function ListaProdutos({
           <tbody>
             {produtos.length === 0 ? (
               <tr>
-                <td colSpan={5} className="vazio">
+                <td colSpan={6} className="vazio">
                   Nenhum produto cadastrado ainda.
                 </td>
               </tr>

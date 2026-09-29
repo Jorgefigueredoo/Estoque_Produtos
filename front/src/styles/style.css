@@ -450,3 +450,31 @@ td.col-numero { font-family: var(--fonte-mono); text-align: right; }
   margin: 0 0 16px;
   font-size: 18px;
 }
+/* ==========================================================================
+   Abas (Produtos / Fornecedores)
+   ========================================================================== */
+.abas {
+  max-width: 1080px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+  display: flex;
+  gap: 8px;
+}
+
+.aba {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--tinta-suave);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+.aba:hover { background: var(--papel-alt); }
+
+.aba--ativa {
+  background: var(--branco);
+  color: var(--tinta);
+  border-color: var(--tinta-suave);
+}

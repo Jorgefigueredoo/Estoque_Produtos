@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+import * as fornecedorApi from "./api/fornecedorApi";
 import * as api from "./api/produtoApi";
+import { FornecedorForm } from "./components/FornecedorForm";
+import { ListaFornecedores } from "./components/ListaFornecedores";
 import { ListaProdutos } from "./components/ListaProdutos";
 import { MensagemBox } from "./components/MensagemBox";
 import { MovimentoModal } from "./components/MovimentoModal";
@@ -7,11 +10,18 @@ import { ProdutoForm } from "./components/ProdutoForm";
 import { Topo } from "./components/Topo";
 import { useMensagem } from "./hooks/useMensagem";
 import type {
+  EdicaoFornecedor,
+  Fornecedor,
+  NovoFornecedor,
+} from "./types/fornecedor";
+import type {
   EdicaoProduto,
   NovoProduto,
   Produto,
   TipoMovimento,
 } from "./types/produto";
+
+type Aba = "produtos" | "fornecedores";
 
 interface Movimento {
   produto: Produto;
@@ -24,6 +34,10 @@ function textoDoErro(erro: unknown): string {
 
 export default function App() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [aba, setAba] = useState<Aba>("produtos");
+  const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
+  const [fornecedorEmEdicao, setFornecedorEmEdicao] =
+    useState<Fornecedor | null>(null);
   const [produtoEmEdicao, setProdutoEmEdicao] = useState<Produto | null>(null);
   const [movimento, setMovimento] = useState<Movimento | null>(null);
   const { mensagem, mostrarMensagem } = useMensagem();
@@ -36,9 +50,63 @@ export default function App() {
     }
   }, [mostrarMensagem]);
 
+  const carregarFornecedores = useCallback(async () => {
+    try {
+      setFornecedores(await fornecedorApi.listarFornecedores());
+    } catch (erro) {
+      mostrarMensagem(textoDoErro(erro), "erro");
+    }
+  }, [mostrarMensagem]);
+
   useEffect(() => {
     void carregarProdutos();
-  }, [carregarProdutos]);
+    void carregarFornecedores();
+  }, [carregarProdutos, carregarFornecedores]);
+
+  async function cadastrarFornecedor(
+    fornecedor: NovoFornecedor,
+  ): Promise<boolean> {
+    try {
+      await fornecedorApi.cadastrarFornecedor(fornecedor);
+      mostrarMensagem("Fornecedor cadastrado.", "sucesso");
+      await carregarFornecedores();
+      return true;
+    } catch (erro) {
+      mostrarMensagem(textoDoErro(erro), "erro");
+      return false;
+    }
+  }
+
+  async function salvarEdicaoFornecedor(
+    id: number,
+    fornecedor: EdicaoFornecedor,
+  ): Promise<boolean> {
+    try {
+      await fornecedorApi.editarFornecedor(id, fornecedor);
+      mostrarMensagem("Fornecedor atualizado.", "sucesso");
+      setFornecedorEmEdicao(null);
+      // O nome do fornecedor aparece na lista de produtos.
+      await Promise.all([carregarFornecedores(), carregarProdutos()]);
+      return true;
+    } catch (erro) {
+      mostrarMensagem(textoDoErro(erro), "erro");
+      return false;
+    }
+  }
+
+  async function excluirFornecedor(fornecedor: Fornecedor) {
+    if (!confirm(`Excluir "${fornecedor.nome}"?`)) return;
+
+    try {
+      await fornecedorApi.deletarFornecedor(fornecedor.id);
+      if (fornecedorEmEdicao?.id === fornecedor.id) setFornecedorEmEdicao(null);
+      mostrarMensagem("Fornecedor excluído.", "sucesso");
+      await carregarFornecedores();
+    } catch (erro) {
+      // Ex.: fornecedor ainda tem produtos associados.
+      mostrarMensagem(textoDoErro(erro), "erro");
+    }
+  }
 
   async function cadastrar(produto: NovoProduto): Promise<boolean> {
     try {
@@ -114,9 +182,45 @@ export default function App() {
 
       <MensagemBox mensagem={mensagem} />
 
+      <nav className="abas" aria-label="Seções">
+        <button
+          type="button"
+          className={`aba${aba === "produtos" ? " aba--ativa" : ""}`}
+          onClick={() => setAba("produtos")}
+        >
+          Produtos
+        </button>
+        <button
+          type="button"
+          className={`aba${aba === "fornecedores" ? " aba--ativa" : ""}`}
+          onClick={() => setAba("fornecedores")}
+        >
+          Fornecedores
+        </button>
+      </nav>
+
+      {aba === "fornecedores" ? (
+        <main className="conteudo">
+          <FornecedorForm
+            fornecedorEmEdicao={fornecedorEmEdicao}
+            onCadastrar={cadastrarFornecedor}
+            onSalvarEdicao={salvarEdicaoFornecedor}
+            onCancelarEdicao={() => setFornecedorEmEdicao(null)}
+            onErroValidacao={(texto) => mostrarMensagem(texto, "erro")}
+          />
+
+          <ListaFornecedores
+            fornecedores={fornecedores}
+            onRecarregar={carregarFornecedores}
+            onEditar={setFornecedorEmEdicao}
+            onExcluir={excluirFornecedor}
+          />
+        </main>
+      ) : (
       <main className="conteudo">
         <ProdutoForm
           produtoEmEdicao={produtoEmEdicao}
+          fornecedores={fornecedores}
           onCadastrar={cadastrar}
           onSalvarEdicao={salvarEdicao}
           onCancelarEdicao={() => setProdutoEmEdicao(null)}
@@ -131,6 +235,7 @@ export default function App() {
           onMovimentar={(produto, tipo) => setMovimento({ produto, tipo })}
         />
       </main>
+      )}
 
       {movimento && (
         <MovimentoModal
