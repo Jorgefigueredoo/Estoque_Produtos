@@ -15,5 +15,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     boolean existsByNome(String nome);
 
+    boolean existsByFornecedorId(Long fornecedorId);
+
     List<Produto> findByCategoria(CategoriaEnum categoria);
 }
