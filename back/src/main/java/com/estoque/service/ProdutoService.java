@@ -5,27 +5,36 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.estoque.exception.EstoqueInsuficienteException;
+import com.estoque.exception.FornecedorNaoEncontradoException;
 import com.estoque.exception.NomeImutavelException;
 import com.estoque.exception.ProdutoJaExisteException;
 import com.estoque.exception.ProdutoNaoEncontradoException;
 import com.estoque.exception.QuantidadeInvalidaException;
+import com.estoque.model.Fornecedor;
 import com.estoque.model.Produto;
+import com.estoque.repository.FornecedorRepository;
 import com.estoque.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
+    private final FornecedorRepository fornecedorRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoService(ProdutoRepository produtoRepository, FornecedorRepository fornecedorRepository) {
         this.produtoRepository = produtoRepository;
+        this.fornecedorRepository = fornecedorRepository;
     }
 
     public List<Produto> listarProdutos() {
         return produtoRepository.findAll();
     }
 
-    public Produto salvarProduto(Produto produto) {
+    public Produto salvarProduto(Produto produto, Long fornecedorId) {
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+                .orElseThrow(() -> new FornecedorNaoEncontradoException("Fornecedor não encontrado com o ID:" + fornecedorId));
+        produto.setFornecedor(fornecedor);
+
         if (produtoRepository.existsByNome(produto.getNome())) {
             throw new ProdutoJaExisteException("Produto já existe com o nome: " + produto.getNome());
         }
@@ -37,7 +46,7 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public Produto editarProduto(Produto produto, Long id) {
+    public Produto editarProduto(Produto produto, Long id, Long fornecedorId) {
         Produto produtoExistente = produtoRepository.findById(id)
                 .orElseThrow(() -> new ProdutoNaoEncontradoException("Produto não encontrado com o ID:" + id));
 
@@ -46,8 +55,12 @@ public class ProdutoService {
                     "Não é possível alterar o nome do produto. Nome atual: " + produtoExistente.getNome());
         }
 
+        Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+                .orElseThrow(() -> new FornecedorNaoEncontradoException("Fornecedor não encontrado com o ID:" + fornecedorId));
+
         produtoExistente.setDescricao(produto.getDescricao());
         produtoExistente.setCategoria(produto.getCategoria());
+        produtoExistente.setFornecedor(fornecedor);
         produtoExistente.setPreco(produto.getPreco());
 
         return produtoRepository.save(produtoExistente);
@@ -74,7 +87,8 @@ public class ProdutoService {
         }
 
         if (quantidade > produtoExistente.getQuantidade()) {
-            throw new EstoqueInsuficienteException("A quantidade removida não pode ser maior que a quantidade em estoque");
+            throw new EstoqueInsuficienteException(
+                    "A quantidade removida não pode ser maior que a quantidade em estoque");
         }
 
         produtoExistente.setQuantidade(produtoExistente.getQuantidade() - quantidade);
