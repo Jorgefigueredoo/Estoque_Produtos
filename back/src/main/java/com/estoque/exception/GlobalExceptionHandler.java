@@ -32,4 +32,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleQuantidadeInvalidaException(QuantidadeInvalidaException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler (FornecedorNaoEncontradoException.class)
+    public ResponseEntity<String> handleFornecedorNaoEncontradoExcepition(FornecedorNaoEncontradoException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
