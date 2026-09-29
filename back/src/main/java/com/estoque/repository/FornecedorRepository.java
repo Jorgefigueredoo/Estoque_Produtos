@@ -15,4 +15,6 @@ public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
     boolean existsByNome(String nome);
 
     boolean existsByCnpj(String cnpj);
+    
+    boolean existsByFornecedorId(Long fornecedorId);
 }

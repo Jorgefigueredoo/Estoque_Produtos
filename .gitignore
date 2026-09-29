@@ -1,4 +1,4 @@
-### Java / Maven (Estoque) ###
+### Java / Maven (back) ###
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -38,5 +38,5 @@ nbdist/
 .vscode/
 
 ### Configuração local ###
-Estoque/HELP.md
-Estoque/src/main/resources/application.properties
+back/HELP.md
+back/src/main/resources/application.properties

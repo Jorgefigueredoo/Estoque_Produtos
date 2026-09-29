@@ -18,7 +18,7 @@ O objetivo do projeto foi construir um back end simples **sem a utilização de 
 ## Estrutura
 
 ```
-Estoque/   -> API REST em Spring Boot
+back/      -> API REST em Spring Boot
 front/     -> interface web (React + TypeScript, build com Vite)
 ```
 
@@ -31,13 +31,13 @@ Crie o banco no MySQL:
 CREATE DATABASE estoque_produtos;
 ```
 
-Depois ajuste usuário e senha em `Estoque/src/main/resources/application.properties`.
+Depois ajuste usuário e senha em `back/src/main/resources/application.properties`.
 As tabelas são criadas automaticamente pelo Hibernate (`ddl-auto=update`).
 
 ### Back end
 
 ```bash
-cd Estoque
+cd back
 ./mvnw spring-boot:run
 ```
 
