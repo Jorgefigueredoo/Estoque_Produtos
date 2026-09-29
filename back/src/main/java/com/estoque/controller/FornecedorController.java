@@ -24,7 +24,6 @@ public class FornecedorController {
         this.fornecedorService = fornecedorService;
     }
     
-
     @GetMapping
     public List<Fornecedor> listarFornecedores() {
         return fornecedorService.listarFornecedores();

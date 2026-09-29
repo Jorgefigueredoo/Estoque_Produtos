@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estoque.dto.ProdutoRequest;
+import com.estoque.dto.ProdutoResponse;
 import com.estoque.dto.QuantidadeRequest;
 import com.estoque.model.Produto;
 import com.estoque.service.ProdutoService;
@@ -28,12 +29,15 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public List<Produto> listarProdutos() {
-        return produtoService.listarProdutos();
+    public List<ProdutoResponse> listarProdutos() {
+        List<Produto> produtos = produtoService.listarProdutos();
+        return produtos.stream()
+                .map(ProdutoResponse::new)
+                .toList();
     }
 
     @PutMapping("/{id}")
-    public Produto editarProduto(@RequestBody ProdutoRequest produtoRequest, @PathVariable Long id) {
+    public ProdutoResponse editarProduto(@RequestBody ProdutoRequest produtoRequest, @PathVariable Long id) {
         Produto produto = new Produto();
         produto.setNome(produtoRequest.getNome());
         produto.setDescricao(produtoRequest.getDescricao());
@@ -41,21 +45,24 @@ public class ProdutoController {
         produto.setQuantidade(produtoRequest.getQuantidade());
         produto.setCategoria(produtoRequest.getCategoria());
 
-        return produtoService.editarProduto(produto, id, produtoRequest.getFornecedorId());
+        Produto produtoEditado = produtoService.editarProduto(produto, id, produtoRequest.getFornecedorId());
+        return new ProdutoResponse(produtoEditado);
     }
 
     @PostMapping("/{id}/entrada")
-    public Produto darEntrada(@PathVariable Long id, @RequestBody QuantidadeRequest request) {
-        return produtoService.darEntrada(id, request.getQuantidade());
+    public ProdutoResponse darEntrada(@PathVariable Long id, @RequestBody QuantidadeRequest request) {
+        Produto produtoEntrando = produtoService.darEntrada(id, request.getQuantidade());
+        return new ProdutoResponse(produtoEntrando);
     }
 
     @PostMapping("/{id}/saida")
-    public Produto darSaida(@PathVariable Long id, @RequestBody QuantidadeRequest request) {
-        return produtoService.darSaida(id, request.getQuantidade());
+    public ProdutoResponse darSaida(@PathVariable Long id, @RequestBody QuantidadeRequest request) {
+        Produto produtoSaindo = produtoService.darSaida(id, request.getQuantidade());
+        return new ProdutoResponse(produtoSaindo);
     }
 
     @PostMapping
-    public Produto salvarProduto(@RequestBody ProdutoRequest produtoRequest) {
+    public ProdutoResponse salvarProduto(@RequestBody ProdutoRequest produtoRequest) {
         Produto produto = new Produto();
         produto.setNome(produtoRequest.getNome());
         produto.setDescricao(produtoRequest.getDescricao());
@@ -63,7 +70,8 @@ public class ProdutoController {
         produto.setQuantidade(produtoRequest.getQuantidade());
         produto.setCategoria(produtoRequest.getCategoria());
 
-        return produtoService.salvarProduto(produto, produtoRequest.getFornecedorId());
+        Produto produtoSalvo = produtoService.salvarProduto(produto, produtoRequest.getFornecedorId());
+        return new ProdutoResponse(produtoSalvo);
 
     }
 
