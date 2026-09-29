@@ -23,6 +23,7 @@ public class FornecedorController {
     public FornecedorController(FornecedorService fornecedorService) {
         this.fornecedorService = fornecedorService;
     }
+    
 
     @GetMapping
     public List<Fornecedor> listarFornecedores() {
