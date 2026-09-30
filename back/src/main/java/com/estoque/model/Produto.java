@@ -23,7 +23,7 @@ public class Produto {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "fornecedor_id", nullable = false)
+    @JoinColumn(name = "fornecedor_id", nullable = false) // Especifica a coluna de junção para o relacionamento ManyToOne
     private Fornecedor fornecedor;
 
     @Column(name = "nome_produto", nullable = false)
